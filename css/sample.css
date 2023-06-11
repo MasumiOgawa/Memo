@@ -1,0 +1,239 @@
+body {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 25px;
+  width: 100%;
+}
+header {
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+  font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+}
+h1 {
+  font-size: 30px;
+}
+main {
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid #ccc;
+}
+footer {
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+}
+
+.container-chart{
+  width: 100%;
+  height: 100%;
+  height: auto;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+h2 {
+  font-size: 30px;
+  text-align: center;
+  margin-top: 50px;
+  border-top: #212529;
+}
+
+p {
+  font-size: 200%;
+  text-align: center;
+  border-bottom: 1px solid #fff;
+  height: 200px;
+}
+ul {
+  padding: 0;
+  display: table; /* 定義 */
+  table-layout: fixed;
+  width: 96%;
+  font-size: 80%;
+  margin: 0 3%;
+  text-align: center;
+}
+li {
+  list-style-type: none;
+  background-color: #fff;
+  width: 500px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  /* 真ん中に配置 */
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+
+  cursor: pointer;
+  color: #0d7dfd;
+}
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+html {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+.btn,
+a.btn,
+button.btn {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.5;
+  position: relative;
+  display: inline-block;
+  padding: 1rem 4rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: #212529;
+  border-radius: 0.5rem;
+}
+
+.btn--orange,
+a.btn--orange {
+  color: #fff;
+  background-color: #545454;
+}
+
+.btn--orange:hover,
+a.btn--orange:hover {
+  color: #fff;
+  background: #bebebe;
+}
+
+a.btn--radius {
+  border-radius: 100vh;
+}
+
+.container-input{
+  width: 100%;
+  height: 100%;
+  height: auto;
+  margin-left: 0;
+  margin-right: 0;
+  justify-content: center;
+  align-items: center;
+}
+#deadline  {
+  margin: 10px 3%;
+  width: 500px;
+  height: 40px;
+  font-size: 80%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px #666666;
+  background-color: rgb(246, 246, 246);
+}
+
+#subDeadline  {
+  margin: 10px 3%;
+  width: 500px;
+  height: 40px;
+  font-size: 80%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px #666666;
+  background-color: rgb(246, 246, 246);
+}
+
+textarea {
+  margin: 10px 3%;
+  width: 100%;
+  height: 70px;
+  font-size: 80%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px #666666;
+  background-color: rgb(246, 246, 246);
+}
+select {
+  margin: 10px 3%;
+  width: 500px;
+  height: 40px;
+  font-size: 80%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px;
+  background-color: rgb(246, 246, 246);
+  box-shadow: 2px 2px 2px 2px #666666;
+}
+
+#key {
+  margin: 10px 3%;
+  width: 100%;
+  font-size: 80%;
+  border-radius: 10px;
+  height: 40px;
+  background-color:rgb(246, 246, 246);
+  border-size: 0.1px;
+  box-shadow: 2px 2px 2px 2px #666666;
+}
+#parentkey {
+  margin: 10px 3%;
+  width: 100%;
+  font-size: 80%;
+  border-radius: 10px;
+  height: 40px;
+  background-color:rgb(246, 246, 246);
+  border: 0.1px;
+  box-shadow: 2px 2px 2px 2px #666666;
+}
+#subTaskName{
+  margin: 10px 3%;
+  width: 500px;
+  height: 40px;
+  font-size: 80%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 2px;
+  background-color: rgb(246, 246, 246);
+  box-shadow: 2px 2px 2px 2px #666666;
+}
+
+table {
+  border: 1px solid #242424;
+  table-layout:   auto;
+}
+
+th {
+  font-size: 20px;
+  text-align: center;
+  background-color: #d0e7fc;
+  border-bottom: 1px solid #242424;
+  background-color: #242424;
+  color: #fff;
+}
+td {
+  width:10%;
+  font-size: 16px;
+  background-color: rgb(241, 239, 239);
+  border-bottom: 1px solid #222222;
+}
+input {
+  margin: 10px 3%;
+  height: 40px;
+  font-size: 80%;
+  border-radius: 10px;
+  height: 30px;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.check th{
+  width: 5%;
+}
+

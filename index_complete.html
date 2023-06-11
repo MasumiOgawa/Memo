@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>myMemoPad</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+<header>
+  <h1>かんたんタスク管理帳</h1>
+</header>
+<main>
+    <div class="container-chart">
+    <div id="gantt_charts">
+        <h2>ガントチャート</h2>
+    </div>
+    <div id="chart_div"></div>
+ </div>
+ <div class = "container-input">
+  <h2>タイトル登録</h2>
+  <div class="input">
+    <input type="text" id="key">
+  </div>
+  <div class="input">
+  <textarea id="memo"></textarea>
+ </div>
+    <div class="input">
+  <select id="category">
+    <option value="仕事">MMPC(フィリピン)</option>
+    <option value="プライベート">MMTh(タイ)</option>
+    <option value="その他">その他</option>
+  </select>
+    </div>
+    <div class="input">
+  <input type="date" id="deadline">
+    </div>
+  <ul>
+    <li id="save"><a href="" class="btn btn--orange btn--radius">保存</a></li>
+    <li id="clearChecked"><a href="" class="btn btn--orange btn--radius">選んだ項目を消す</a></li>
+    <li id="clear"><a href="" class="btn btn--orange btn--radius">全部消す</a></li>
+
+  </ul>
+</div>
+  <table id="list">
+    <thead>
+      <tr>
+        <th class = "check">check</th>
+        <th>key</th>
+        <th>memo</th>
+        <th>category</th>
+        <th>timestamp</th>
+        <th>deadline</th>
+        <th>diffDays</th>
+        <th>edit</th>
+      </tr>
+    </thead>
+    <tbody id="tasks"></tbody>
+  </table>
+
+  <h2>Sub Task</h2>
+  <div class="input">
+  <select id="parentKey"></select>
+</div>
+<div class="input">
+  <input type="text" id="subTaskName">
+
+<div class="input"></div>
+  <input type="date" id="subDeadline">
+</div>
+  <ul>
+    <li id="saveSubTask"><a href="" class="btn btn--orange btn--radius">保存</a></li>
+    <li id="clearCheckedSubTasks"><a href="" class="btn btn--orange btn--radius">選んだ項目を消す</a></li>
+    <li id="clearSubTasks"><a href="" class="btn btn--orange btn--radius">全部消す</a></li>
+
+  </ul>
+  <table id="subTaskList">
+    <thead>
+      <tr>
+        <th>check</th>
+        <th>parentKey</th>
+        <th>subTaskName</th>
+        <th>subDeadline</th>
+        <th>diffDays</th>
+        <th>edit</th>
+      </tr>
+    </thead>
+    <tbody id="subTasks"></tbody>
+  </table>
+</main>
+
+
+<script>
+
+    //1. Save クリックイベント
+    $("#save").on("click",function(){
+        const key = $("#key").val();
+        const value = $("#memo").val();
+        const category = $("#category").val();
+        const deadline = $("#deadline").val();
+    
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); 
+        const date = now.getDate().toString().padStart(2, '0'); 
+    
+        const timestamp = `${year}-${month}-${date}`;
+    
+        const today = new Date();
+        const deadlineDate = new Date(deadline);
+        const diff = deadlineDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    
+        const combinedValue = JSON.stringify({value: value, category: category, timestamp: timestamp, deadline: deadline, diffDays: diffDays});
+        localStorage.setItem(key, combinedValue);
+    
+        const option = new Option(key, key);
+        $("#parentKey").append(option);
+    
+        let diffDaysMess = "のこり"+diffDays+"日";
+        if(diffDays < 0) {
+            diffDaysMess = '<span style="color:red;">⚠️ 期限が'+Math.abs(diffDays)+'日過ぎてます</span>';
+        } else if (diffDays <= 3) {
+            diffDaysMess = '<span style="color:red;">⚠️ のこり'+diffDays+'日です</span>';
+        }
+    
+        const html = '<tr><td><input type="checkbox" class="checkbox"></td><td>'+key+'</td><td>'+value+'</td><td>'+category+'</td><td>'+timestamp+'</td><td>'+deadline+'</td><td>'+diffDaysMess+'</td></tr>';
+        $("#tasks").append(html);
+    
+        $("#key").val("");
+        $("#memo").val("");
+        $("#category").val("");
+        $("#deadline").val("");
+    });
+    
+    //2. Clear クリックイベント
+    $("#clear").on("click",function(){
+        localStorage.clear();
+        $("#tasks").empty();
+        $("#subTasks").empty();
+        $("#parentKey").empty();
+    });
+    
+    //3. Clear Checked クリックイベント
+    $("#clearChecked").on("click",function(){
+        $('.checkbox:checked').each(function() {
+            const key = $(this).parents('tr').find('td:nth-child(2)').text();
+            localStorage.removeItem(key);
+            $(this).parents('tr').remove();
+        });
+    });
+    
+    // 1. Save Sub Task クリックイベント
+    $("#saveSubTask").on("click",function(){
+        const parentKey = $("#parentKey").val();
+        const subTaskName = $("#subTaskName").val();
+        const subDeadline = $("#subDeadline").val();
+        const subTaskKey = "sub_" + parentKey + "_" + subTaskName;
+    
+        const today = new Date();
+        const deadlineDate = new Date(subDeadline);
+        const diff = deadlineDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+        let diffDaysMess = "のこり"+diffDays+"日";
+    
+        if(diffDays < 0) {
+            diffDaysMess = '<span style="color:red;">⚠️ 期限が'+Math.abs(diffDays)+'日過ぎてます</span>';
+        } else if (diffDays <= 3) {
+            diffDaysMess = '<span style="color:red;">⚠️ のこり'+diffDays+'日です</span>';
+        }
+    
+        const subTaskValue = JSON.stringify({parentKey: parentKey, subTaskName: subTaskName, subDeadline: subDeadline, diffDays: diffDays});
+    
+        localStorage.setItem(subTaskKey, subTaskValue);
+    
+        const html = '<tr><td><input type="checkbox" class="checkbox"></td><td>'+parentKey+'</td><td>'+subTaskName+'</td><td>'+subDeadline+'</td><td>'+diffDaysMess+'</td></tr>';
+        $("#subTasks").append(html);
+        $("#subTaskName").val("");
+        $("#subDeadline").val("");
+    });
+    
+    $(document).ready(function() {
+        $("#tasks").empty();
+        $("#subTasks").empty();
+    
+        for(let i=0; i<localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = JSON.parse(localStorage.getItem(key));
+    
+            if(key.indexOf('sub_') === -1) {  // Main Task
+                let diffDaysMess = "のこり"+value.diffDays+"日";
+                if(value.diffDays < 0) {
+                    diffDaysMess = '<span style="color:red;">⚠️ 期限が'+Math.abs(value.diffDays)+'日過ぎてます</span>';
+                } else if (value.diffDays <= 3) {
+                    diffDaysMess = '<span style="color:red;">⚠️ のこり'+value.diffDays+'日です</span>';
+                }
+    
+                const option = new Option(key, key);
+                $("#parentKey").append(option);
+    
+                const html = '<tr><td><input type="checkbox" class="checkbox"></td><td class="data-cell">'+key+'</td><td class="data-cell">'+value.value+'</td><td class="data-cell">'+value.category+'</td><td>'+value.timestamp+'</td><td class="data-cell">'+value.deadline+'</td><td>'+diffDaysMess+'</td><td><button class="edit-button">編集</button><button class="save-button" disabled>保存</button></td></td><</tr>';
+                $("#tasks").append(html);
+            } else {  // Sub Task
+                let diffDaysMess = "のこり"+value.diffDays+"日";
+                if(value.diffDays < 0) {
+                    diffDaysMess = '<span style="color:red;">⚠️ 期限が'+Math.abs(value.diffDays)+'日過ぎてます</span>';
+                } else if (value.diffDays <= 3) {
+                    diffDaysMess = '<span style="color:red;">⚠️ のこり'+value.diffDays+'日です</span>';
+                }
+    
+                const html = '<tr><td><input type="checkbox" class="checkbox"></td><td class="data-cell">'+value.parentKey+'</td><td class="data-cell">'+value.subTaskName+'</td><td class="data-cell">'+value.subDeadline+'</td><td>'+diffDaysMess+'</td><td><button class="edit-button">編集</button><button class="save-button" disabled>保存</button></td></td><</tr>';
+                $("#subTasks").append(html);
+            }
+        }
+    });
+
+    $(document).on('click', '.edit-button', function() {
+    let tr = $(this).closest('tr');
+    tr.find('.data-cell').each(function() {
+        let text = $(this).text();
+        $(this).html('<input type="text" value="'+text+'">');
+    });
+    tr.find('.save-button').prop('disabled', false);
+});
+
+  
+
+$(document).on('click', '.save-button', function() {
+    let tr = $(this).closest('tr');
+    tr.find('.data-cell').each(function() {
+        let input = $(this).find('input');
+        if (input.length) {
+            let text = input.val();
+            $(this).text(text);
+        }
+    });
+    $(this).prop('disabled', true);
+
+    // ここで新しい値を保存します
+});
+window.onload = function() {
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+}
+
+function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Task ID');
+    data.addColumn('string', 'Task Name');
+    data.addColumn('string', 'Resource');
+    data.addColumn('date', 'Start Date');
+    data.addColumn('date', 'End Date');
+    data.addColumn('number', 'Duration');
+    data.addColumn('number', 'Percent Complete');
+    data.addColumn('string', 'Dependencies');
+
+    for(let i=0; i<localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = JSON.parse(localStorage.getItem(key));
+
+        if(key.indexOf('sub_') === -1) {  // Main Task
+            const startDate = new Date();
+            const endDate = new Date(value.deadline);
+            const duration = value.diffDays;
+
+            data.addRow([key, key, value.category, startDate, endDate, duration, 100, null]);
+        } else {  // Sub Task
+            const startDate = new Date();
+            const endDate = new Date(value.subDeadline);
+            const duration = value.diffDays;
+
+            data.addRow([key, value.subTaskName, value.parentKey, startDate, endDate, duration, 100, null]);
+        }
+    }
+
+    var options = {
+        gantt: {
+            trackHeight: 50
+        }
+    };
+
+    var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+}
+
+
+
+
+    
+    </script>
+    
+<footer><small>かんたんタスク管理帳</small></footer>
+</body>
+</html>
